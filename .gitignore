@@ -1,2 +1,6 @@
+*.csproj
+*.sln
+*.userprefs
+*.pidb
 Temp/
 Library/
