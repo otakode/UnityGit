@@ -1,6 +1,12 @@
 *.csproj
 *.sln
+*.suo
 *.userprefs
 *.pidb
-Temp/
+*.vsconfig
+Build/
 Library/
+Logs/
+obj/
+Temp/
+.vs/
