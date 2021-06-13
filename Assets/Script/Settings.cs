@@ -13,43 +13,72 @@ public class Settings : MonoBehaviour
 
 	[Header("Audio")]
 	public Slider MusicSlider = null;
-	public Slider SoundSlider = null;
+	public Slider SoundsSlider = null;
 	public AudioMixer audioMixer = null;
 
 	#endregion
 
 	#region Fields
 
-	public SettingsBool Fullscreen { get; set; } = new SettingsBool("fullscreen", true);
+	public SettingsBool Fullscreen { get; set; } = new SettingsBool("fullscreen", false);
 
 	public SettingsFloat Music { get; set; } = new SettingsFloat("music", 100f);
 	public SettingsFloat Sounds { get; set; } = new SettingsFloat("sounds", 100f);
 
 	#endregion
 
+	#region UnityEvents
+
 	void Start()
 	{
 		if (FullscreenToggle)
 		{
-			FullscreenToggle.onValueChanged.AddListener((bool newValue) => { Fullscreen.Value = newValue; Screen.fullScreen = newValue; });
 			FullscreenToggle.isOn = Fullscreen.Value;
+			FullscreenToggle.onValueChanged.AddListener(SetFullscreen);
 		}
+		SetFullscreen(Fullscreen.Value);
 
 		if (MusicSlider)
 		{
-			MusicSlider.onValueChanged.AddListener((float newValue) => { Music.Value = newValue; audioMixer.SetFloat("MusicVolume", PercentToDecibels(newValue)); });
 			MusicSlider.value = Music.Value;
+			MusicSlider.onValueChanged.AddListener(SetMusicVolume);
 		}
+		SetMusicVolume(Music.Value);
 
-		if (SoundSlider)
+		if (SoundsSlider)
 		{
-			SoundSlider.onValueChanged.AddListener((float newValue) => { Sounds.Value = newValue; audioMixer.SetFloat("SoundsVolume", PercentToDecibels(newValue)); });
-			SoundSlider.value = Sounds.Value;
+			SoundsSlider.value = Sounds.Value;
+			SoundsSlider.onValueChanged.AddListener(SetSoundsVolume);
 		}
+		SetSoundsVolume(Sounds.Value);
+	}
+
+	#endregion
+
+	#region Methods
+
+	public void SetFullscreen(bool state)
+	{
+		Fullscreen.Value = state; 
+		Screen.fullScreen = state;
+	}
+
+	public void SetMusicVolume(float volume)
+	{
+		Music.Value = volume;
+		audioMixer.SetFloat("MusicVolume", PercentToDecibels(volume));
+	}
+
+	public void SetSoundsVolume(float volume)
+	{
+		Sounds.Value = volume;
+		audioMixer.SetFloat("SoundsVolume", PercentToDecibels(volume));
 	}
 
 	public static float PercentToDecibels(float percent)
 	{
 		return Mathf.Max(-80f, Mathf.Log10(percent / 100f) * 20f);
 	}
+
+	#endregion
 }
